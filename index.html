@@ -1,0 +1,1482 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FF730F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bachoco">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Bachoco Mantenimiento">
+<meta name="description" content="Agenda de mantenimiento correctivo - Bachoco Zona Sur Morelos. Ing. Benjamin Serafín Payan">
+<title>Bachoco · Mantenimiento</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon.svg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#0a1620;
+  --panel:#122636;
+  --panel2:#1a3348;
+  --text:#f5f8fb;
+  --muted:#9bb4c7;
+  --orange:#FF730F;
+  --orange2:#ff8c3a;
+  --red:#ff414b;
+  --yellow:#ffc52d;
+  --green:#29c785;
+  --line:#2a4a60;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:linear-gradient(165deg,#07121a 0%,#0d1f2d 45%,#0a1620 100%);
+  font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color:var(--text);
+  min-height:100vh;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:6px}
+.app{max-width:860px;margin:auto;min-height:100vh;padding:12px 12px 95px}
+
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.brand-wrap{display:flex;flex-direction:column;gap:2px}
+.brand{font-weight:900;color:var(--orange);font-size:22px;line-height:1.15}
+.brand-sub{font-size:11px;color:#c8d8e4;font-weight:500}
+.supervisor{font-size:11px;color:var(--orange2);font-weight:600;margin-top:3px}
+.date{color:var(--muted);font-size:12px;text-align:right;padding-top:4px}
+
+.hero{
+  background:linear-gradient(125deg,#1c3a52 0%,#122636 100%);
+  border:1px solid #2d4e66;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:12px;
+}
+.hero h1{font-size:20px;margin:0 0 4px}
+.hero p{margin:0;color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{background:#0a1c2a;border-radius:12px;padding:11px;text-align:center}
+.stat strong{display:block;font-size:22px;color:var(--orange)}
+.stat span{font-size:11px;color:var(--muted)}
+
+.install-banner{
+  display:none;
+  background:linear-gradient(135deg,#FF730F,#ff8c3a);
+  color:#fff;border-radius:14px;padding:12px 14px;
+  margin-bottom:12px;gap:10px;flex-direction:column;
+}
+.install-banner.show{display:flex}
+.install-banner .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.install-banner p{margin:0;font-size:13px;font-weight:600}
+.install-banner .hint{font-size:11px;font-weight:500;opacity:.95;line-height:1.4}
+.install-banner button{
+  background:#fff;color:#FF730F;border:0;border-radius:10px;
+  padding:9px 14px;font-weight:800;white-space:nowrap;
+}
+
+.tabs,.weeknav{display:flex;gap:7px;overflow:auto;padding:2px 0 10px}
+.chip{
+  border:1px solid var(--line);border-radius:999px;
+  background:#122636;color:var(--text);
+  padding:8px 13px;white-space:nowrap;font-size:12px;
+}
+.chip.active{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:800}
+.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
+.sectionhead h2{font-size:17px;margin:0}
+.primary{
+  background:linear-gradient(135deg,#FF730F,#ff8c3a);
+  color:#fff;border:0;border-radius:12px;
+  padding:11px 14px;font-weight:800;
+  box-shadow:0 3px 12px rgba(255,115,15,.3);
+}
+.secondary{background:#1a3348;color:#fff;border:1px solid #36566b;border-radius:10px;padding:9px 12px}
+.small{font-size:12px;color:var(--muted)}
+
+.agenda{display:grid;gap:9px}
+.item{
+  display:grid;grid-template-columns:5px 1fr;
+  background:#122636;border:1px solid #2a4a60;
+  border-radius:14px;overflow:hidden;
+}
+.stripe.red{background:var(--red)}
+.stripe.yellow{background:var(--yellow)}
+.stripe.green{background:var(--green)}
+.itembody{padding:12px}
+.itemtop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.time{font-weight:900;font-size:14px}
+.farm{font-size:12px;color:var(--muted);margin-top:3px}
+.badge{font-size:10px;font-weight:900;padding:5px 8px;border-radius:7px;white-space:nowrap}
+.badge.red{background:#5b1d28;color:#ff9ca2}
+.badge.yellow{background:#584719;color:#ffdf76}
+.badge.green{background:#124b3c;color:#79f0be}
+.equip{font-weight:750;margin-top:8px}
+.desc{font-size:12px;color:#c1d2dc;margin-top:4px;line-height:1.4}
+.itemfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.status{font-size:11px;color:var(--muted)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.mini{
+  border:1px solid #34546a;background:#1a3348;color:#fff;
+  border-radius:8px;padding:7px 10px;font-size:11px;
+}
+.mini.close-btn{border-color:var(--orange);color:var(--orange2);font-weight:700}
+.mini.img-btn{border-color:#4a90c8;color:#8ec4f0}
+.mini.reopen-btn{border-color:#a06a2a;color:#e0b378}
+.empty{
+  text-align:center;color:var(--muted);
+  padding:32px 16px;border:1px dashed #34546a;border-radius:16px;
+}
+
+.panel{
+  background:#122636;border:1px solid #2a4a60;
+  border-radius:16px;padding:14px;margin-top:10px;
+}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;color:#c2d4df;font-weight:700}
+.field input,.field select,.field textarea{
+  width:100%;background:#0a1c2a;border:1px solid #34546a;
+  border-radius:10px;padding:11px;color:#fff;outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange)}
+.field textarea{min-height:76px;resize:vertical}
+.prioritypick{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.pbtn{
+  padding:11px 4px;border-radius:11px;background:#0a1c2a;
+  border:1px solid #34546a;color:#fff;font-weight:800;font-size:12px;
+}
+.pbtn small{display:block;font-size:10px;font-weight:500;margin-top:4px}
+.pbtn.selected.red{background:#5b1d28;border-color:var(--red)}
+.pbtn.selected.yellow{background:#584719;border-color:var(--yellow)}
+.pbtn.selected.green{background:#124b3c;border-color:var(--green)}
+.formactions{display:flex;gap:8px;margin-top:14px}
+.formactions button{flex:1}
+.hidden{display:none!important}
+.notice{font-size:11px;color:var(--muted);line-height:1.45;margin-top:12px}
+
+.photo-zone{
+  border:2px dashed #3a5a72;border-radius:14px;
+  padding:16px;text-align:center;background:#0a1c2a;
+}
+.photo-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--orange);color:#fff;border:0;
+  border-radius:11px;padding:11px 16px;font-weight:800;margin:6px;
+}
+.photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.photo-thumb{
+  position:relative;width:90px;height:90px;
+  border-radius:10px;overflow:hidden;border:2px solid #34546a;
+}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .rm{
+  position:absolute;top:3px;right:3px;
+  width:22px;height:22px;border-radius:50%;
+  background:#ff414b;color:#fff;border:0;
+  font-size:12px;display:grid;place-items:center;
+}
+
+.close-header{
+  background:linear-gradient(120deg,#1a3a28,#122636);
+  border:1px solid #2a5a40;border-radius:16px;
+  padding:14px;margin-bottom:12px;
+}
+.close-header h2{margin:0 0 4px;color:#79f0be}
+.close-summary{font-size:13px;color:var(--muted)}
+
+.farmrow{
+  display:flex;justify-content:space-between;gap:8px;
+  align-items:center;padding:12px 0;border-bottom:1px solid var(--line);
+}
+.farmrow:last-child{border-bottom:0}
+.farmrow input{width:74px;background:#0a1c2a;border:1px solid #34546a;border-radius:8px;padding:8px;color:#fff}
+.farmedit{display:grid;grid-template-columns:1fr 85px auto;gap:8px;align-items:center;margin-top:10px}
+.farmedit input{min-width:0;background:#0a1c2a;border:1px solid #34546a;border-radius:8px;padding:9px;color:#fff}
+
+.weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.weekday{min-width:0;background:#122636;border:1px solid var(--line);border-radius:8px;padding:5px 3px;min-height:110px}
+.weekday.today{border-color:var(--orange)}
+.wdname{text-align:center;font-size:10px;color:var(--muted)}
+.wdnum{text-align:center;font-size:15px;font-weight:900;margin:3px 0 6px}
+.calpill{display:block;width:100%;border:0;border-radius:5px;padding:4px 2px;margin:3px 0;text-align:left;font-size:9px;line-height:1.2;color:white;overflow-wrap:anywhere;background:#25445a}
+.calpill.red{background:#702630}
+.calpill.yellow{background:#65521b}
+.calpill.green{background:#15533f}
+.calpill.done{opacity:.55;text-decoration:line-through}
+.monthgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.monthcell{min-width:0;min-height:66px;border:1px solid var(--line);background:#122636;border-radius:7px;padding:4px}
+.monthcell.today{border-color:var(--orange)}
+.monthcell.muted{opacity:.45}
+.monthnum{font-size:11px;font-weight:800}
+.dotrow{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.red{background:var(--red)}
+.dot.yellow{background:var(--yellow)}
+.dot.green{background:var(--green)}
+.monthsummary{font-size:9px;color:var(--muted);margin-top:4px}
+
+.nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#07121aee;backdrop-filter:blur(14px);
+  border-top:1px solid #2a4a60;
+  display:flex;justify-content:center;gap:4px;
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:20;
+}
+.nav button{
+  flex:1;max-width:180px;background:transparent;border:0;
+  color:var(--muted);padding:6px 2px;font-size:10px;border-radius:10px;
+}
+.nav button.active{background:#1a3348;color:var(--orange);font-weight:800}
+.nav span{display:block;font-size:18px;margin-bottom:2px}
+
+#reportCanvasWrap{
+  position:fixed;left:-9999px;top:0;
+  width:720px;background:#fff;color:#1a1a1a;
+  font-family:system-ui,-apple-system,sans-serif;
+  padding:0;z-index:-1;
+}
+.report-header{background:#FF730F;color:#fff;padding:18px 22px}
+.report-header h1{margin:0;font-size:22px;font-weight:900}
+.report-header p{margin:4px 0 0;font-size:12px;opacity:.95}
+.report-body{padding:18px 22px 24px}
+.report-section{margin-bottom:14px}
+.report-section h3{margin:0 0 6px;font-size:13px;color:#FF730F;border-bottom:2px solid #FF730F;padding-bottom:3px}
+.report-row{display:flex;gap:8px;margin:3px 0;font-size:12px}
+.report-row b{min-width:110px;color:#333}
+.report-text{font-size:12px;line-height:1.45;margin:4px 0;white-space:pre-wrap}
+.report-photos{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.report-photos img{width:150px;height:110px;object-fit:cover;border:1px solid #ddd;border-radius:4px}
+.report-footer{background:#f5f5f5;padding:12px 22px;font-size:10px;color:#666;border-top:1px solid #e0e0e0}
+
+.toast{
+  position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1a3348;color:#fff;padding:12px 18px;border-radius:12px;
+  border:1px solid var(--line);font-size:13px;z-index:100;
+  box-shadow:0 8px 28px rgba(0,0,0,.5);max-width:90vw;text-align:center;
+  opacity:0;transition:opacity .25s, transform .25s;pointer-events:none;
+  line-height:1.4;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:520px){
+  .formgrid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .app{padding:10px 9px 90px}
+  .hero h1{font-size:18px}
+  .stats strong{font-size:19px}
+  .weekday{min-height:88px;padding:3px 2px}
+  .calpill{font-size:8px}
+  .monthcell{min-height:52px;padding:3px}
+  .farmedit{grid-template-columns:1fr 70px}
+  .farmedit button{grid-column:1/-1}
+  .weekdays{gap:2px}
+  .photo-thumb{width:78px;height:78px}
+}
+</style>
+</head>
+<body>
+<main class="app">
+
+<header class="top">
+  <div class="brand-wrap">
+    <div class="brand">Bachoco</div>
+    <div class="brand-sub">Mantenimiento · Zona Sur de Morelos</div>
+    <div class="supervisor">Ing. Benjamin Serafín Payan · Supervisor de Mantenimiento Correctivo</div>
+  </div>
+  <div class="date" id="todayLabel"></div>
+</header>
+
+<div class="install-banner" id="installBanner">
+  <div class="row">
+    <p id="installTitle">📲 Instala la app en tu celular</p>
+    <button type="button" id="installBtn" class="hidden">Instalar</button>
+    <button type="button" id="installDismiss">✕</button>
+  </div>
+  <div class="hint" id="installHint"></div>
+</div>
+
+<section class="hero">
+  <h1>Mi agenda de mantenimiento</h1>
+  <p>Organiza fallas, cierra trabajos con fotos y genera el reporte en imagen.</p>
+  <div class="stats">
+    <div class="stat"><strong id="nCritical">0</strong><span>Críticas abiertas</span></div>
+    <div class="stat"><strong id="nToday">0</strong><span>Agendadas hoy</span></div>
+    <div class="stat"><strong id="nOpen">0</strong><span>Pendientes totales</span></div>
+  </div>
+</section>
+
+<div class="tabs" id="viewTabs">
+  <button class="chip active" data-mode="day">Día</button>
+  <button class="chip" data-mode="week">Semana</button>
+  <button class="chip" data-mode="month">Mes</button>
+</div>
+
+<section id="agendaView">
+  <div class="sectionhead">
+    <h2 id="agendaTitle">Agenda de hoy</h2>
+    <button class="primary" id="newBtn">＋ Nueva falla</button>
+  </div>
+  <div class="weeknav">
+    <button class="secondary" id="prevPeriod">← Anterior</button>
+    <button class="secondary" id="todayBtn">Hoy</button>
+    <button class="secondary" id="nextPeriod">Siguiente →</button>
+    <span class="small" id="periodLabel" style="align-self:center"></span>
+  </div>
+  <div id="agenda"></div>
+  <p class="notice">Los datos se guardan en este dispositivo. Usa "Cerrar falla" para documentar el trabajo con fotos y generar la imagen del reporte.</p>
+</section>
+
+<section id="formView" class="hidden">
+  <div class="sectionhead">
+    <h2 id="formTitle">Registrar falla</h2>
+    <button class="secondary" id="backBtn">← Agenda</button>
+  </div>
+  <form class="panel" id="faultForm">
+    <input type="hidden" id="editId">
+    <div class="formgrid">
+      <div class="field">
+        <label for="farm">Granja *</label>
+        <select id="farm" required></select>
+      </div>
+      <div class="field">
+        <label for="house">Caseta (opcional)</label>
+        <select id="house"><option value="">No especificada / área general</option></select>
+      </div>
+      <div class="field">
+        <label for="equipment">Equipo *</label>
+        <select id="equipment" required>
+          <option value="">Selecciona equipo</option>
+          <option>Extractor / ventilador</option>
+          <option>Bomba de agua</option>
+          <option>Alimentación automática / sinfín</option>
+          <option>Bebederos / línea de agua</option>
+          <option>Motor / reductor</option>
+          <option>Tablero eléctrico</option>
+          <option>Generador de emergencia</option>
+          <option>Sensor / controlador</option>
+          <option>Cortinas / enfriamiento</option>
+          <option>Otro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="duration">Tiempo estimado</label>
+        <select id="duration">
+          <option value="30">30 min</option>
+          <option value="60" selected>1 hora</option>
+          <option value="120">2 horas</option>
+          <option value="180">3 horas</option>
+          <option value="240">4 horas</option>
+          <option value="480">Más de 4 horas</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label id="priorityLabel">Prioridad *</label>
+        <div class="prioritypick" role="radiogroup" aria-labelledby="priorityLabel">
+          <button type="button" class="pbtn selected red" data-priority="critical" aria-pressed="true" role="radio">1 · Crítica<small>Atención inmediata</small></button>
+          <button type="button" class="pbtn yellow" data-priority="high" aria-pressed="false" role="radio">2 · Alta<small>Atender pronto</small></button>
+          <button type="button" class="pbtn green" data-priority="planned" aria-pressed="false" role="radio">3 · Programada<small>Planificar visita</small></button>
+        </div>
+        <input type="hidden" id="priority" value="critical">
+      </div>
+      <div class="field">
+        <label for="date">Fecha *</label>
+        <input id="date" type="date" required>
+      </div>
+      <div class="field">
+        <label for="time">Hora planeada *</label>
+        <input id="time" type="time" required value="09:00">
+      </div>
+      <div class="field">
+        <label for="status">Estado</label>
+        <select id="status">
+          <option value="open">Pendiente</option>
+          <option value="progress">En proceso</option>
+          <option value="done">Cerrada</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label for="description">Falla / síntomas *</label>
+        <textarea id="description" required placeholder="Ej. Extractor no arranca, temperatura subiendo..."></textarea>
+      </div>
+      <div class="field full">
+        <label for="notes">Notas para la visita (opcional)</label>
+        <textarea id="notes" placeholder="Refacciones, herramienta, diagnóstico probable..."></textarea>
+      </div>
+    </div>
+    <div class="formactions">
+      <button type="button" class="secondary" id="cancelBtn">Cancelar</button>
+      <button type="submit" class="primary">Guardar en agenda</button>
+    </div>
+  </form>
+</section>
+
+<section id="closeView" class="hidden">
+  <div class="sectionhead">
+    <h2>Cierre de falla</h2>
+    <button class="secondary" id="closeBackBtn">← Agenda</button>
+  </div>
+  <div class="close-header" id="closeSummaryBox"></div>
+  <form class="panel" id="closeForm">
+    <input type="hidden" id="closeFaultId">
+    <div class="formgrid">
+      <div class="field full">
+        <label for="workDone">Trabajo realizado *</label>
+        <textarea id="workDone" required placeholder="Describe qué se hizo para corregir la falla..."></textarea>
+      </div>
+      <div class="field">
+        <label for="partsUsed">Refacciones / materiales usados</label>
+        <input id="partsUsed" type="text" placeholder="Ej. Capacitor 20µF, bandas, etc.">
+      </div>
+      <div class="field">
+        <label for="realDuration">Tiempo real invertido</label>
+        <select id="realDuration">
+          <option value="30">30 min</option>
+          <option value="60" selected>1 hora</option>
+          <option value="120">2 horas</option>
+          <option value="180">3 horas</option>
+          <option value="240">4 horas</option>
+          <option value="480">Más de 4 horas</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label for="closeNotes">Observaciones finales</label>
+        <textarea id="closeNotes" placeholder="Recomendaciones, pendientes, estado de las aves, etc."></textarea>
+      </div>
+      <div class="field">
+        <label for="technician">Técnico responsable</label>
+        <input id="technician" type="text" placeholder="Nombre del técnico">
+      </div>
+      <div class="field">
+        <label for="closeDate">Fecha de cierre *</label>
+        <input id="closeDate" type="date" required>
+      </div>
+      <div class="field full">
+        <label>Fotos del trabajo (opcional)</label>
+        <div class="photo-zone" id="photoZone">
+          <div class="small" style="margin-bottom:8px">Añade fotos del antes/después o del equipo reparado</div>
+          <button type="button" class="photo-btn" id="takePhotoBtn">📷 Añadir fotos</button>
+          <input type="file" id="photoInput" accept="image/*" multiple hidden>
+          <div class="photo-previews" id="photoPreviews"></div>
+        </div>
+        <p class="notice" style="margin-top:8px">Máximo 4 fotos. Se incluyen en la imagen del reporte.</p>
+      </div>
+    </div>
+    <div class="formactions" style="flex-direction:column;gap:10px">
+      <button type="submit" class="primary" style="width:100%">✅ Guardar cierre y generar reporte</button>
+      <button type="button" class="secondary" id="saveCloseOnlyBtn" style="width:100%">Guardar cierre sin imagen</button>
+    </div>
+  </form>
+</section>
+
+<section id="farmsView" class="hidden">
+  <div class="sectionhead"><h2>Mis granjas y casetas</h2></div>
+  <div class="panel">
+    <p class="small">Escribe el nombre de cada granja y cuántas casetas tiene.</p>
+    <div id="farmList"></div>
+    <div class="farmedit">
+      <input id="newFarmName" placeholder="Nombre de la granja">
+      <input id="newFarmHouses" type="number" min="0" max="300" placeholder="Casetas">
+      <button class="primary" id="addFarmBtn">＋ Agregar</button>
+    </div>
+  </div>
+</section>
+
+<section id="historyView" class="hidden">
+  <div class="sectionhead">
+    <h2>Historial de fallas</h2>
+    <button class="secondary" id="exportBtn">Exportar CSV</button>
+  </div>
+  <div class="panel">
+    <div class="formgrid">
+      <div class="field full">
+        <label for="histSearch">Buscar</label>
+        <input id="histSearch" type="search" placeholder="Granja, equipo, descripción, técnico...">
+      </div>
+      <div class="field">
+        <label for="histStatus">Estado</label>
+        <select id="histStatus">
+          <option value="">Todos</option>
+          <option value="open">Pendiente</option>
+          <option value="progress">En proceso</option>
+          <option value="done">Cerrada</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="histPriority">Prioridad</label>
+        <select id="histPriority">
+          <option value="">Todas</option>
+          <option value="critical">Crítica</option>
+          <option value="high">Alta</option>
+          <option value="planned">Programada</option>
+        </select>
+      </div>
+    </div>
+    <div id="histCount" class="small" style="margin-top:10px"></div>
+  </div>
+  <div class="panel">
+    <button class="secondary" id="backupBtn">Descargar respaldo JSON</button>
+    <label class="secondary" style="display:inline-block;cursor:pointer;margin-left:6px">
+      Importar respaldo <input id="importFile" type="file" accept="application/json" hidden>
+    </label>
+    <p class="notice">Los datos viven en este navegador y dispositivo.</p>
+  </div>
+  <div class="agenda" id="historyList"></div>
+  <div class="panel" style="margin-top:12px">
+    <button class="secondary" id="clearBtn">Borrar todos los registros</button>
+  </div>
+</section>
+
+</main>
+
+<nav class="nav">
+  <button class="active" data-view="agendaView"><span>▦</span>Agenda</button>
+  <button data-view="formView"><span>＋</span>Nueva falla</button>
+  <button data-view="farmsView"><span>⌖</span>Granjas</button>
+  <button data-view="historyView"><span>☷</span>Historial</button>
+</nav>
+
+<div id="reportCanvasWrap" aria-hidden="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   SERVICE WORKER (para instalación y modo offline)
+   ============================================================ */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        // Buscar actualizaciones cada hora
+        setInterval(() => reg.update().catch(() => {}), 60 * 60 * 1000);
+      })
+      .catch(err => console.warn('Service Worker no registrado:', err));
+  });
+}
+
+/* ============================================================
+   BANNER DE INSTALACIÓN (Android/Chrome + iOS manual)
+   ============================================================ */
+const installBanner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const installHint = document.getElementById('installHint');
+const installTitle = document.getElementById('installTitle');
+let deferredPrompt = null;
+
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+  || window.navigator.standalone === true;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const installDismissed = sessionStorage.getItem('bachoco_install_dismissed') === '1';
+
+if (!isStandalone && !installDismissed && isIOS) {
+  installTitle.textContent = '📲 Añade la app a tu inicio';
+  installHint.textContent = 'En Safari: toca el botón Compartir ↑ y elige "Añadir a pantalla de inicio".';
+  installBanner.classList.add('show');
+}
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.classList.remove('hidden');
+  installTitle.textContent = '📲 Instala la app en tu celular';
+  installHint.textContent = 'Acceso directo, pantalla completa y funciona sin internet.';
+  installBanner.classList.add('show');
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBanner.classList.remove('show');
+});
+
+document.getElementById('installDismiss').addEventListener('click', () => {
+  installBanner.classList.remove('show');
+  sessionStorage.setItem('bachoco_install_dismissed', '1');
+});
+
+window.addEventListener('appinstalled', () => {
+  installBanner.classList.remove('show');
+});
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const KEY = 'bachoco_maintenance_agenda_v4';
+const OLDKEYS = ['bachoco_maintenance_agenda_v3','bachoco_maintenance_agenda_v2','bachoco_maintenance_agenda_v1'];
+const FARMKEY = 'bachoco_farm_setup_v1';
+const SUPERVISOR = 'Ing. Benjamin Serafín Payan';
+const SUPERVISOR_ROLE = 'Supervisor de Mantenimiento Correctivo';
+
+let faults = [], farms = [], mode = 'day', anchor = new Date();
+let currentView = 'agendaView', priority = 'critical';
+let closePhotos = [];
+
+const todayISO = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+};
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const safe = (s = '') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeId = id => /^[A-Za-z0-9_-]+$/.test(String(id)) ? String(id) : null;
+const color = p => ({critical:'red', high:'yellow', planned:'green'}[p] || 'green');
+const pname = p => ({critical:'Crítica', high:'Alta', planned:'Programada'}[p] || p);
+const sname = s => ({open:'Pendiente', progress:'En proceso', done:'Cerrada'}[s] || s);
+
+let toastTimer = null;
+function toast(msg, ms = 2600) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function farmName(f) {
+  if (!f) return '';
+  if (f.farmId) {
+    const fm = farms.find(x => x.id === f.farmId);
+    if (fm) return fm.name;
+  }
+  return f.farm || '';
+}
+
+/* ============================================================
+   PERSISTENCIA
+   ============================================================ */
+function load() {
+  try {
+    let raw = localStorage.getItem(KEY);
+    if (!raw) {
+      for (const k of OLDKEYS) {
+        raw = localStorage.getItem(k);
+        if (raw) break;
+      }
+    }
+    const parsed = JSON.parse(raw || '[]');
+    faults = Array.isArray(parsed) ? parsed : [];
+  } catch { faults = []; }
+
+  try {
+    const parsedFarms = JSON.parse(localStorage.getItem(FARMKEY) || '[]');
+    farms = Array.isArray(parsedFarms) ? parsedFarms : [];
+  } catch { farms = []; }
+
+  if (!farms.length) {
+    farms = [
+      {id:'f1', name:'Corralejo', houses:0},
+      {id:'f2', name:'Michapa', houses:0},
+      {id:'f3', name:'Xoxocotla 1', houses:0},
+      {id:'f4', name:'Xoxocotla 2', houses:0},
+      {id:'f5', name:'Xoxocotla 3', houses:0},
+      {id:'f6', name:'Xoxocotla 4', houses:0},
+      {id:'f7', name:'Xoxocotla 5', houses:0},
+      {id:'f8', name:'Santa Rosa', houses:0}
+    ];
+    saveFarms();
+  }
+
+  let migrated = false;
+  faults.forEach(f => {
+    if (!f.farmId && f.farm) {
+      const fm = farms.find(x => x.name.toLowerCase() === String(f.farm).toLowerCase());
+      if (fm) { f.farmId = fm.id; migrated = true; }
+    }
+    if (!safeId(f.id)) { f.id = String(Date.now()) + Math.random().toString(36).slice(2,6); migrated = true; }
+  });
+  if (migrated) save();
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(faults));
+    return true;
+  } catch (e) {
+    if (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014) {
+      alert('⚠️ El almacenamiento del dispositivo está lleno.\n\nDescarga un respaldo (Historial → Descargar respaldo) y borra reportes antiguos con fotos antes de seguir.');
+    } else {
+      alert('No se pudo guardar en este dispositivo:\n' + e.message);
+    }
+    return false;
+  }
+}
+
+function saveFarms() {
+  try { localStorage.setItem(FARMKEY, JSON.stringify(farms)); return true; }
+  catch (e) { alert('No se pudieron guardar las granjas: ' + e.message); return false; }
+}
+
+/* ============================================================
+   NAVEGACIÓN Y VISTAS
+   ============================================================ */
+function setView(v) {
+  currentView = v;
+  ['agendaView','formView','closeView','farmsView','historyView'].forEach(id => {
+    $(id).classList.toggle('hidden', id !== v);
+  });
+  document.querySelectorAll('.nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === v);
+  });
+  stats();
+  if (v === 'farmsView') renderFarms();
+  if (v === 'historyView') renderHistory();
+  if (v === 'agendaView') renderAgenda();
+}
+
+function rank(a, b) {
+  const r = {critical:0, high:1, planned:2};
+  if (a.status === 'done' && b.status !== 'done') return 1;
+  if (b.status === 'done' && a.status !== 'done') return -1;
+  return (r[a.priority] ?? 3) - (r[b.priority] ?? 3) || (a.date + 'T' + a.time).localeCompare(b.date + 'T' + b.time);
+}
+
+function stats() {
+  const o = faults.filter(f => f.status !== 'done');
+  $('nCritical').textContent = o.filter(f => f.priority === 'critical').length;
+  $('nToday').textContent = o.filter(f => f.date === todayISO()).length;
+  $('nOpen').textContent = o.length;
+}
+
+function card(f) {
+  const hasClose = f.status === 'done' && f.closure;
+  const id = safeId(f.id) || '';
+  return `<article class="item">
+    <div class="stripe ${color(f.priority)}"></div>
+    <div class="itembody">
+      <div class="itemtop">
+        <div>
+          <div class="time">${safe(f.time)} · ${safe(f.date)}</div>
+          <div class="farm">📍 ${safe(farmName(f))}${f.house ? ` · Caseta ${safe(f.house)}` : ''}</div>
+        </div>
+        <span class="badge ${color(f.priority)}">${safe(pname(f.priority))}</span>
+      </div>
+      <div class="equip">${safe(f.equipment)}</div>
+      <div class="desc">${safe(f.description)}</div>
+      ${f.notes ? `<div class="desc">🧰 ${safe(f.notes)}</div>` : ''}
+      ${hasClose ? `<div class="desc" style="color:#79f0be">✅ Cerrada · ${safe(f.closure.technician || SUPERVISOR)} · ${safe(f.closure.date || '')}</div>` : ''}
+      <div class="itemfoot">
+        <span class="status">${safe(sname(f.status))} · ${f.duration >= 480 ? 'Más de 4 h' : f.duration + ' min'}</span>
+        <div class="actions">
+          <button class="mini" onclick="editFault('${id}')">Editar</button>
+          ${f.status !== 'done'
+            ? `<button class="mini close-btn" onclick="openClose('${id}')">Cerrar falla</button>`
+            : `<button class="mini img-btn" onclick="generateReportImage('${id}')">🖼 Reporte</button>
+               <button class="mini reopen-btn" onclick="reopenFault('${id}')">↺ Reabrir</button>`}
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function startWeek(d) {
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = (x.getDay() + 6) % 7;
+  x.setDate(x.getDate() - day);
+  return x;
+}
+function same(a, b) { return iso(a) === iso(b); }
+
+function periodDates() {
+  if (mode === 'day') return [new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate())];
+  if (mode === 'week') {
+    const s = startWeek(anchor);
+    return Array.from({length:7}, (_, i) => {
+      const d = new Date(s);
+      d.setDate(s.getDate() + i);
+      return d;
+    });
+  }
+  const s = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+  const n = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0).getDate();
+  return Array.from({length:n}, (_, i) => new Date(s.getFullYear(), s.getMonth(), i + 1));
+}
+
+function renderAgenda() {
+  stats();
+  document.querySelectorAll('#viewTabs .chip').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  const ds = periodDates(), start = ds[0], end = ds[ds.length - 1];
+  $('periodLabel').textContent = mode === 'day'
+    ? start.toLocaleDateString('es-MX', {day:'numeric', month:'short', year:'numeric'})
+    : mode === 'week'
+      ? `${start.toLocaleDateString('es-MX',{day:'numeric',month:'short'})} – ${end.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}`
+      : start.toLocaleDateString('es-MX', {month:'long', year:'numeric'});
+  $('agendaTitle').textContent = mode === 'day' ? 'Agenda diaria' : mode === 'week' ? 'Agenda semanal' : 'Agenda mensual';
+
+  const all = [...faults].sort(rank);
+
+  if (mode === 'day') {
+    const list = all.filter(f => f.date === iso(start));
+    $('agenda').innerHTML = list.length
+      ? `<div class="agenda">${list.map(card).join('')}</div>`
+      : `<div class="empty">No hay fallas para este día.<br><br>Usa <b>Nueva falla</b> para programar una.</div>`;
+    return;
+  }
+
+  if (mode === 'week') {
+    let html = '<div class="weekdays">';
+    for (const d of ds) {
+      const list = all.filter(f => f.date === iso(d)).sort(rank);
+      html += `<div class="weekday ${same(d, new Date()) ? 'today' : ''}">
+        <div class="wdname">${d.toLocaleDateString('es-MX',{weekday:'short'})}</div>
+        <div class="wdnum">${d.getDate()}</div>
+        ${list.map(f => `<button class="calpill ${color(f.priority)} ${f.status==='done'?'done':''}" onclick="editFault('${safeId(f.id)}')" title="${safe(f.description)}">${safe(f.time)} ${safe(farmName(f))}<br>${safe(f.equipment)}</button>`).join('') || '<div class="small" style="text-align:center">—</div>'}
+      </div>`;
+    }
+    html += '</div>';
+    $('agenda').innerHTML = html;
+    return;
+  }
+
+  const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+  const offset = (first.getDay() + 6) % 7;
+  const days = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0).getDate();
+  const cells = Math.ceil((offset + days) / 7) * 7;
+  let html = '<div class="monthgrid">';
+  ['L','M','M','J','V','S','D'].forEach(x => html += `<div class="wdname">${x}</div>`);
+  for (let i = 0; i < cells; i++) {
+    const num = i - offset + 1;
+    const d = new Date(anchor.getFullYear(), anchor.getMonth(), num);
+    const valid = num >= 1 && num <= days;
+    const list = valid ? all.filter(f => f.date === iso(d)) : [];
+    html += `<div class="monthcell ${same(d, new Date()) && valid ? 'today' : ''} ${valid ? '' : 'muted'}" ${valid ? `onclick="selectDate('${iso(d)}')"` : ''}>
+      <div class="monthnum">${valid ? num : ''}</div>
+      <div class="dotrow">${list.slice(0,12).map(f => `<span class="dot ${color(f.priority)}"></span>`).join('')}</div>
+      ${list.length ? `<div class="monthsummary">${list.length} falla(s)</div>` : ''}
+    </div>`;
+  }
+  html += '</div><div class="panel"><b>Fallas del mes</b><div class="small">Toca un día para ver sus tareas.</div></div>';
+  $('agenda').innerHTML = html;
+}
+
+function selectDate(d) {
+  anchor = new Date(d + 'T12:00:00');
+  mode = 'day';
+  renderAgenda();
+}
+
+function openNew() {
+  $('faultForm').reset();
+  $('editId').value = '';
+  $('formTitle').textContent = 'Registrar falla';
+  $('date').value = iso(anchor);
+  $('time').value = new Date().toTimeString().slice(0, 5);
+  $('priority').value = 'critical';
+  priority = 'critical';
+  $('status').value = 'open';
+  $('duration').value = '60';
+  $('description').value = '';
+  $('notes').value = '';
+  renderFarmOptions();
+  document.querySelectorAll('.pbtn').forEach(b => {
+    const sel = b.dataset.priority === 'critical';
+    b.classList.toggle('selected', sel);
+    b.setAttribute('aria-pressed', String(sel));
+  });
+  setView('formView');
+}
+
+function renderFarmOptions(selectedId = '') {
+  $('farm').innerHTML = '<option value="">Selecciona granja</option>'
+    + farms.map(f => `<option value="${safe(f.id)}">${safe(f.name)}</option>`).join('');
+  if (selectedId) $('farm').value = selectedId;
+  renderHouseOptions();
+}
+
+function renderHouseOptions(value = '') {
+  const farmId = $('farm').value;
+  const farm = farms.find(f => f.id === farmId);
+  const n = Number(farm?.houses || 0);
+  $('house').innerHTML = '<option value="">No especificada / área general</option>'
+    + Array.from({length:n}, (_,i) => `<option value="${i+1}">Caseta ${i+1}</option>`).join('');
+  if (value) $('house').value = value;
+}
+
+function editFault(id) {
+  const f = faults.find(x => x.id === id);
+  if (!f) return;
+  $('editId').value = f.id;
+  $('formTitle').textContent = 'Editar falla';
+
+  let selectedFarmId = f.farmId || '';
+  if (!selectedFarmId && f.farm) {
+    const fm = farms.find(x => x.name.toLowerCase() === String(f.farm).toLowerCase());
+    if (fm) selectedFarmId = fm.id;
+  }
+  renderFarmOptions(selectedFarmId);
+  renderHouseOptions(f.house || '');
+
+  $('equipment').value = f.equipment;
+  $('priority').value = f.priority;
+  priority = f.priority;
+  document.querySelectorAll('.pbtn').forEach(b => {
+    const sel = b.dataset.priority === priority;
+    b.classList.toggle('selected', sel);
+    b.setAttribute('aria-pressed', String(sel));
+  });
+  $('date').value = f.date;
+  $('time').value = f.time;
+  $('duration').value = String(f.duration);
+  $('status').value = f.status;
+  $('description').value = f.description;
+  $('notes').value = f.notes || '';
+  setView('formView');
+}
+
+$('faultForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const id = $('editId').value;
+  const farmId = $('farm').value;
+  const farm = farms.find(x => x.id === farmId);
+  if (!farm) { alert('Selecciona una granja.'); return; }
+
+  const obj = {
+    id: id || String(Date.now()) + Math.random().toString(36).slice(2,6),
+    farmId,
+    farm: farm.name,
+    house: $('house').value,
+    equipment: $('equipment').value,
+    priority: $('priority').value,
+    date: $('date').value,
+    time: $('time').value,
+    duration: Number($('duration').value),
+    status: $('status').value,
+    description: $('description').value.trim(),
+    notes: $('notes').value.trim(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (id) {
+    const ix = faults.findIndex(f => f.id === id);
+    if (ix >= 0) {
+      const prev = faults[ix];
+      faults[ix] = { ...prev, ...obj };
+      if (prev.closure) faults[ix].closure = prev.closure;
+      if (prev.closureHistory) faults[ix].closureHistory = prev.closureHistory;
+    }
+  } else {
+    obj.createdAt = new Date().toISOString();
+    faults.push(obj);
+  }
+
+  if (!save()) return;
+  $('faultForm').reset();
+  $('editId').value = '';
+  $('description').value = '';
+  $('notes').value = '';
+  anchor = new Date(obj.date + 'T12:00:00');
+  mode = 'day';
+  setView('agendaView');
+  toast(id ? 'Falla actualizada' : 'Falla agregada a la agenda');
+});
+
+document.querySelectorAll('.pbtn').forEach(b => b.addEventListener('click', () => {
+  priority = b.dataset.priority;
+  $('priority').value = priority;
+  document.querySelectorAll('.pbtn').forEach(x => {
+    const sel = x === b;
+    x.classList.toggle('selected', sel);
+    x.setAttribute('aria-pressed', String(sel));
+  });
+}));
+$('farm').addEventListener('change', () => renderHouseOptions());
+document.querySelectorAll('#viewTabs .chip').forEach(b => b.addEventListener('click', () => {
+  mode = b.dataset.mode;
+  renderAgenda();
+}));
+
+$('prevPeriod').onclick = () => {
+  if (mode === 'day') anchor.setDate(anchor.getDate() - 1);
+  else if (mode === 'week') anchor.setDate(anchor.getDate() - 7);
+  else { anchor = new Date(anchor.getFullYear(), anchor.getMonth() - 1, 1); }
+  renderAgenda();
+};
+$('nextPeriod').onclick = () => {
+  if (mode === 'day') anchor.setDate(anchor.getDate() + 1);
+  else if (mode === 'week') anchor.setDate(anchor.getDate() + 7);
+  else { anchor = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 1); }
+  renderAgenda();
+};
+$('todayBtn').onclick = () => { anchor = new Date(); renderAgenda(); };
+
+document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.view === 'formView') openNew();
+  else setView(b.dataset.view);
+}));
+$('newBtn').onclick = openNew;
+$('backBtn').onclick = () => setView('agendaView');
+$('cancelBtn').onclick = () => {
+  $('faultForm').reset();
+  $('editId').value = '';
+  setView('agendaView');
+};
+
+function openClose(id) {
+  const f = faults.find(x => x.id === id);
+  if (!f) return;
+  closePhotos = (f.closure && f.closure.photos) ? [...f.closure.photos] : [];
+  $('closeFaultId').value = f.id;
+  $('workDone').value = f.closure?.workDone || '';
+  $('partsUsed').value = f.closure?.partsUsed || '';
+  $('realDuration').value = f.closure?.realDuration || '60';
+  $('closeNotes').value = f.closure?.notes || '';
+  $('technician').value = f.closure?.technician || SUPERVISOR;
+  $('closeDate').value = f.closure?.date || todayISO();
+  renderPhotoPreviews();
+
+  $('closeSummaryBox').innerHTML = `
+    <h2>Cierre de falla</h2>
+    <div class="close-summary">
+      <b>${safe(f.equipment)}</b> · ${safe(farmName(f))}${f.house ? ' · Caseta ' + safe(f.house) : ''}<br>
+      ${safe(f.description)}<br>
+      <span style="color:var(--orange)">${safe(pname(f.priority))} · ${safe(f.date)} ${safe(f.time)}</span>
+    </div>`;
+  setView('closeView');
+}
+
+function renderPhotoPreviews() {
+  const box = $('photoPreviews');
+  if (!closePhotos.length) { box.innerHTML = ''; return; }
+  box.innerHTML = closePhotos.map((src, i) => `
+    <div class="photo-thumb">
+      <img src="${src}" alt="Foto ${i+1}">
+      <button type="button" class="rm" onclick="removePhoto(${i})" aria-label="Quitar foto">✕</button>
+    </div>`).join('');
+}
+function removePhoto(i) {
+  closePhotos.splice(i, 1);
+  renderPhotoPreviews();
+}
+window.removePhoto = removePhoto;
+
+$('takePhotoBtn').onclick = () => $('photoInput').click();
+$('photoInput').onchange = async e => {
+  const files = [...e.target.files].slice(0, Math.max(0, 4 - closePhotos.length));
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) continue;
+    const dataUrl = await compressImage(file, 900, 0.72);
+    if (dataUrl) closePhotos.push(dataUrl);
+  }
+  renderPhotoPreviews();
+  e.target.value = '';
+};
+
+function compressImage(file, maxW = 900, quality = 0.72) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    img.src = url;
+  });
+}
+
+function saveClosure(generateImg = true) {
+  const id = $('closeFaultId').value;
+  const f = faults.find(x => x.id === id);
+  if (!f) return;
+  const workDone = $('workDone').value.trim();
+  if (!workDone) { alert('Describe el trabajo realizado.'); return; }
+  const closeDate = $('closeDate').value;
+  if (!closeDate) { alert('Selecciona la fecha de cierre.'); return; }
+
+  f.status = 'done';
+  f.closedAt = new Date().toISOString();
+  f.closure = {
+    workDone,
+    partsUsed: $('partsUsed').value.trim(),
+    realDuration: Number($('realDuration').value),
+    notes: $('closeNotes').value.trim(),
+    technician: $('technician').value.trim() || SUPERVISOR,
+    date: closeDate,
+    photos: closePhotos.slice(0, 4),
+    closedAt: f.closedAt
+  };
+  f.updatedAt = new Date().toISOString();
+
+  if (!save()) return;
+  setView('agendaView');
+  renderAgenda();
+
+  if (generateImg) {
+    setTimeout(() => generateReportImage(id), 300);
+  } else {
+    toast('Cierre guardado');
+  }
+}
+
+function reopenFault(id) {
+  const f = faults.find(x => x.id === id);
+  if (!f) return;
+  if (!confirm('¿Reabrir esta falla?\n\nEl cierre actual se archivará en el historial.')) return;
+  if (f.closure) {
+    f.closureHistory = f.closureHistory || [];
+    f.closureHistory.push({ ...f.closure, archivedAt: new Date().toISOString() });
+  }
+  f.closure = null;
+  f.status = 'open';
+  f.closedAt = null;
+  f.updatedAt = new Date().toISOString();
+  save();
+  renderAgenda();
+  renderHistory();
+  toast('Falla reabierta');
+}
+window.reopenFault = reopenFault;
+
+$('closeForm').addEventListener('submit', e => {
+  e.preventDefault();
+  saveClosure(true);
+});
+$('saveCloseOnlyBtn').onclick = () => {
+  if (!$('workDone').value.trim()) { alert('Describe el trabajo realizado.'); return; }
+  if (!$('closeDate').value) { alert('Selecciona la fecha de cierre.'); return; }
+  saveClosure(false);
+};
+$('closeBackBtn').onclick = () => setView('agendaView');
+
+async function generateReportImage(id) {
+  const f = faults.find(x => x.id === id);
+  if (!f) return;
+  if (typeof html2canvas !== 'function') {
+    alert('La librería de reportes no está disponible.\n\nConéctate a internet una vez para descargarla y vuelve a intentarlo.');
+    return;
+  }
+  const c = f.closure || {};
+  const wrap = $('reportCanvasWrap');
+
+  let photosHtml = '';
+  if (c.photos && c.photos.length) {
+    photosHtml = `<div class="report-section">
+      <h3>Evidencia fotográfica</h3>
+      <div class="report-photos">
+        ${c.photos.map((src, i) => `<img src="${src}" alt="Foto ${i+1}">`).join('')}
+      </div>
+    </div>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="report-header">
+      <h1>BACHOCO</h1>
+      <p>Reporte de Cierre de Mantenimiento Correctivo</p>
+      <p style="margin-top:6px;font-size:11px">${SUPERVISOR} · ${SUPERVISOR_ROLE}</p>
+      <p style="font-size:11px">Zona Sur · Morelos · ${new Date().toLocaleDateString('es-MX')}</p>
+    </div>
+    <div class="report-body">
+      <div class="report-section">
+        <h3>Datos de la falla</h3>
+        <div class="report-row"><b>Granja:</b> <span>${safe(farmName(f))}${f.house ? ' · Caseta ' + safe(f.house) : ''}</span></div>
+        <div class="report-row"><b>Equipo:</b> <span>${safe(f.equipment)}</span></div>
+        <div class="report-row"><b>Prioridad:</b> <span>${safe(pname(f.priority))}</span></div>
+        <div class="report-row"><b>Fecha programada:</b> <span>${safe(f.date)} ${safe(f.time)}</span></div>
+        <div class="report-row"><b>Estado:</b> <span>Cerrada</span></div>
+      </div>
+      <div class="report-section">
+        <h3>Descripción de la falla</h3>
+        <div class="report-text">${safe(f.description || '—')}</div>
+        ${f.notes ? `<div class="report-text"><b>Notas iniciales:</b> ${safe(f.notes)}</div>` : ''}
+      </div>
+      <div class="report-section">
+        <h3>Cierre del trabajo</h3>
+        <div class="report-row"><b>Técnico:</b> <span>${safe(c.technician || SUPERVISOR)}</span></div>
+        <div class="report-row"><b>Fecha de cierre:</b> <span>${safe(c.date || '—')}</span></div>
+        <div class="report-row"><b>Tiempo real:</b> <span>${c.realDuration >= 480 ? 'Más de 4 h' : (c.realDuration || '—') + ' min'}</span></div>
+        <div class="report-row"><b>Refacciones:</b> <span>${safe(c.partsUsed || 'Ninguna registrada')}</span></div>
+        <div class="report-text" style="margin-top:8px"><b>Trabajo realizado:</b><br>${safe(c.workDone || '—')}</div>
+        ${c.notes ? `<div class="report-text"><b>Observaciones:</b><br>${safe(c.notes)}</div>` : ''}
+      </div>
+      ${photosHtml}
+    </div>
+    <div class="report-footer">
+      Bachoco · Mantenimiento Zona Sur Morelos · ${SUPERVISOR} · ${SUPERVISOR_ROLE}
+    </div>`;
+
+  const imgs = wrap.querySelectorAll('img');
+  await Promise.all(Array.from(imgs).map(img => {
+    if (img.complete) return Promise.resolve();
+    return new Promise(r => { img.onload = r; img.onerror = r; });
+  }));
+
+  try {
+    const canvas = await html2canvas(wrap, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    const farmSafe = (farmName(f) || 'Granja').replace(/\s+/g, '_');
+    const fileName = `Reporte_Cierre_${farmSafe}_${f.date || todayISO()}.png`;
+
+    const file = new File([blob], fileName, { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'Reporte de cierre',
+          text: `${f.equipment} · ${farmName(f)}`
+        });
+        wrap.innerHTML = '';
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') { wrap.innerHTML = ''; return; }
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    toast('Reporte generado');
+  } catch (err) {
+    console.error(err);
+    alert('No se pudo generar la imagen del reporte. Intenta de nuevo.');
+  } finally {
+    wrap.innerHTML = '';
+  }
+}
+window.generateReportImage = generateReportImage;
+window.editFault = editFault;
+window.openClose = openClose;
+window.selectDate = selectDate;
+
+function renderFarms() {
+  $('farmList').innerHTML = farms.map(f => `
+    <div class="farmrow">
+      <div style="flex:1;min-width:0">
+        <input aria-label="Nombre de granja" style="width:100%" value="${safe(f.name)}"
+               onchange="renameFarm('${safeId(f.id)}',this.value)">
+        <div class="small">${faults.filter(x => x.farmId === f.id).length} reportes registrados</div>
+      </div>
+      <label class="small">Casetas<br>
+        <input aria-label="Número de casetas" type="number" min="0" max="300" value="${Number(f.houses)||0}"
+               onchange="setHouses('${safeId(f.id)}',this.value)">
+      </label>
+      <button class="mini" onclick="deleteFarm('${safeId(f.id)}')">Eliminar</button>
+    </div>`).join('') || '<div class="empty">Agrega tu primera granja.</div>';
+}
+
+function renameFarm(id, name) {
+  if (!id) return;
+  name = name.trim();
+  if (!name) { alert('Escribe un nombre de granja.'); renderFarms(); return; }
+  if (farms.some(f => f.id !== id && f.name.toLowerCase() === name.toLowerCase())) {
+    alert('Ya existe una granja con ese nombre.');
+    renderFarms();
+    return;
+  }
+  const f = farms.find(x => x.id === id);
+  if (f) {
+    f.name = name;
+    saveFarms();
+    faults.forEach(x => { if (x.farmId === id) x.farm = name; });
+    save();
+    renderFarms();
+    toast('Granja renombrada');
+  }
+}
+function setHouses(id, n) {
+  if (!id) return;
+  const f = farms.find(x => x.id === id);
+  if (f) { f.houses = Math.max(0, Math.min(300, Number(n) || 0)); saveFarms(); renderFarms(); }
+}
+function deleteFarm(id) {
+  if (!id) return;
+  const f = farms.find(x => x.id === id);
+  if (!f) return;
+  const count = faults.filter(x => x.farmId === id).length;
+  if (confirm(`¿Eliminar la granja "${f.name}" de la lista?\n\n${count ? `Hay ${count} reportes asociados; no se borrarán pero dejarán de mostrar esta granja.` : 'No tiene reportes asociados.'}`)) {
+    farms = farms.filter(x => x.id !== id);
+    saveFarms();
+    renderFarms();
+  }
+}
+window.renameFarm = renameFarm;
+window.setHouses = setHouses;
+window.deleteFarm = deleteFarm;
+
+$('addFarmBtn').onclick = () => {
+  const name = $('newFarmName').value.trim();
+  const houses = Math.max(0, Math.min(300, Number($('newFarmHouses').value) || 0));
+  if (!name) { alert('Escribe el nombre de la granja.'); return; }
+  if (farms.some(f => f.name.toLowerCase() === name.toLowerCase())) { alert('Esa granja ya existe.'); return; }
+  farms.push({ id: 'f' + Date.now().toString(36), name, houses });
+  saveFarms();
+  $('newFarmName').value = '';
+  $('newFarmHouses').value = '';
+  renderFarms();
+};
+
+function renderHistory() {
+  const q = ($('histSearch')?.value || '').trim().toLowerCase();
+  const st = $('histStatus')?.value || '';
+  const pr = $('histPriority')?.value || '';
+
+  let list = [...faults].sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+
+  if (st) list = list.filter(f => f.status === st);
+  if (pr) list = list.filter(f => f.priority === pr);
+  if (q) {
+    list = list.filter(f => {
+      const hay = [
+        farmName(f), f.house, f.equipment, f.description, f.notes,
+        f.closure?.workDone, f.closure?.partsUsed, f.closure?.technician, f.closure?.notes
+      ].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  $('histCount').textContent = `${list.length} de ${faults.length} registros`;
+  $('historyList').innerHTML = list.length
+    ? `<div class="agenda">${list.map(card).join('')}</div>`
+    : '<div class="empty">No hay resultados con esos filtros.</div>';
+}
+
+['histSearch','histStatus','histPriority'].forEach(id => {
+  const el = $(id);
+  if (el) el.addEventListener('input', renderHistory);
+});
+
+function download(name, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+$('backupBtn').onclick = () => {
+  download(
+    'respaldo_mantenimiento_bachoco.json',
+    JSON.stringify({ version: 4, faults, farms }, null, 2),
+    'application/json'
+  );
+};
+
+$('exportBtn').onclick = () => {
+  const cols = [
+    'farm','house','equipment','priority','date','time','duration','status',
+    'description','notes',
+    'closeDate','technician','realDuration','partsUsed','workDone','closeNotes','photosCount'
+  ];
+  const rows = faults.map(f => {
+    const c = f.closure || {};
+    return [
+      farmName(f), f.house, f.equipment, pname(f.priority), f.date, f.time,
+      f.duration, sname(f.status), f.description, f.notes,
+      c.date || '', c.technician || '', c.realDuration || '',
+      c.partsUsed || '', c.workDone || '', c.notes || '',
+      (c.photos ? c.photos.length : 0)
+    ];
+  });
+  const csv = [cols.join(','), ...rows.map(r =>
+    r.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(',')
+  )].join('\n');
+  download('historial_mantenimiento.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
+};
+
+$('importFile').onchange = async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    const incoming = Array.isArray(data) ? data : data.faults;
+    if (!Array.isArray(incoming)) throw new Error('Formato inválido');
+
+    const valid = incoming.filter(f =>
+      f && typeof f === 'object' &&
+      typeof f.id !== 'undefined' &&
+      typeof f.date === 'string' &&
+      typeof f.equipment === 'string'
+    ).map(f => ({
+      ...f,
+      id: safeId(f.id) || String(Date.now()) + Math.random().toString(36).slice(2,6)
+    }));
+
+    if (!valid.length) { alert('No se encontraron registros válidos en el archivo.'); return; }
+
+    if (!confirm(`¿Importar ${valid.length} registros?\n\n(Los que ya existan se omitirán por id)`)) return;
+
+    const ids = new Set(faults.map(f => f.id));
+    const nuevos = valid.filter(f => !ids.has(f.id));
+    faults.push(...nuevos);
+
+    if (Array.isArray(data.farms) && data.farms.length) {
+      const existingIds = new Set(farms.map(x => x.id));
+      const existingNames = new Set(farms.map(x => x.name.toLowerCase()));
+      data.farms.forEach(fm => {
+        if (!fm || typeof fm !== 'object' || !fm.name) return;
+        const fid = safeId(fm.id) || ('f' + Date.now().toString(36) + Math.random().toString(36).slice(2,4));
+        if (!existingIds.has(fid) && !existingNames.has(String(fm.name).toLowerCase())) {
+          farms.push({ id: fid, name: String(fm.name), houses: Math.max(0, Number(fm.houses) || 0) });
+        }
+      });
+      saveFarms();
+    }
+
+    faults.forEach(f => {
+      if (!f.farmId && f.farm) {
+        const fm = farms.find(x => x.name.toLowerCase() === String(f.farm).toLowerCase());
+        if (fm) f.farmId = fm.id;
+      }
+    });
+
+    save();
+    renderHistory();
+    stats();
+    toast(`Respaldo importado: ${nuevos.length} nuevos`);
+  } catch (err) {
+    console.error(err);
+    alert('No se pudo leer el respaldo JSON.');
+  }
+  e.target.value = '';
+};
+
+$('clearBtn').onclick = () => {
+  if (!faults.length) { toast('No hay registros que borrar'); return; }
+  if (confirm('¿Borrar TODOS los reportes de este dispositivo?\n\nEsta acción no se puede deshacer. Te recomendamos descargar un respaldo primero.')) {
+    faults = [];
+    save();
+    renderHistory();
+    stats();
+    toast('Todos los registros fueron eliminados');
+  }
+};
+
+$('todayLabel').textContent = new Date().toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
+load();
+renderFarmOptions();
+renderAgenda();
+
+if (navigator.storage && navigator.storage.estimate) {
+  navigator.storage.estimate().then(est => {
+    const usedPct = est.quota ? (est.usage / est.quota) * 100 : 0;
+    if (usedPct > 80) {
+      setTimeout(() => toast('⚠️ Almacenamiento casi lleno. Descarga un respaldo y borra reportes antiguos.', 5000), 1500);
+    }
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>
